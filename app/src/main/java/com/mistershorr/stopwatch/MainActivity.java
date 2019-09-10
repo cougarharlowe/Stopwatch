@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -63,8 +64,10 @@ public class MainActivity extends AppCompatActivity {
         buttonStartstop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(isRunning) {
-
+                if(!isRunning) {
+                    // base should be old base + any paused time
+                    // paused time is the diff between when you stopped it and now
+                    // current time SystemClock.elapsedRealtime()
                     chronometerTime.setBase(Base);
                     chronometerTime.start();
                     isRunning = false;
