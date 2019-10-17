@@ -49,9 +49,21 @@ public class MainActivity extends AppCompatActivity {
         setListeners();
         //chronometerTime();
         if( savedInstanceState != null) {
-            chronometerTime.setBase(savedInstanceState.getLong(KEY_SAVED_BASE));
             isRunning = savedInstanceState.getBoolean(KEY_SAVED_ISRUNNING);
+
             pausedTime = savedInstanceState.getLong(KEY_SAVED_PAUSEDTIME);
+
+            if(isRunning){
+                chronometerTime.setBase(savedInstanceState.getLong(KEY_SAVED_BASE));
+                chronometerTime.start();
+
+                chronometerTime.setText(R.string.main_stop);
+            }
+            else {
+                chronometerTime.setBase(savedInstanceState.getLong(KEY_SAVED_BASE) +
+                        SystemClock.elapsedRealtime() - pausedTime );
+                pausedTime = SystemClock.elapsedRealtime();
+            }
             //chronometerTime.start();
         }
 
@@ -72,39 +84,32 @@ public class MainActivity extends AppCompatActivity {
     private void setListeners() {
 
 
-
         buttonStartstop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!isRunning) {
-                    // base should be old base + any paused time
-                    // paused time is the diff between when you stopped it and now
-                    // current time SystemClock.elapsedRealtime()
-                    pausedTime = pausedTime - SystemClock.elapsedRealtime();
-                    if(base != 0) {
-                        base = base - pausedTime;
-                        chronometerTime.setBase(base);
-                    } else {
-                        chronometerTime.setBase(SystemClock.elapsedRealtime()); }
-                    chronometerTime.start();
-                    isRunning = true;
-                    buttonStartstop.setText("Stop");
-
+                isRunning = !isRunning;
+                if (isRunning) {
+                    if (pausedTime == 0) {
+                        chronometerTime.setBase(SystemClock.elapsedRealtime());
+                        chronometerTime.start();
+                        buttonStartstop.setText(R.string.main_stop);
+                    }
+                    else {
+                        chronometerTime.setBase(chronometerTime.getBase() + SystemClock.elapsedRealtime() -
+                               pausedTime);
+                        chronometerTime.start();
+                        buttonStartstop.setText(R.string.main_stop);
+                    }
                 } else {
-
                     chronometerTime.stop();
-                    base = chronometerTime.getBase();
+                    buttonStartstop.setText(R.string.main_start);
                     pausedTime = SystemClock.elapsedRealtime();
-                    isRunning = false;
-                    buttonStartstop.setText("Start");
 
                 }
 
 
-
             }
         });
-
         buttonReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
