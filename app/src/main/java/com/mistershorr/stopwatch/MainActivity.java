@@ -115,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 chronometerTime.setBase(SystemClock.elapsedRealtime());
                 base = 0;
+                pausedTime = 0;
                 isRunning = false;
                 chronometerTime.stop();
                 buttonStartstop.setText("Start");
